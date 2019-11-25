@@ -36,10 +36,21 @@ Python bindings for the snappy compression library from Google.
 More details about Snappy library: http://google.github.io/snappy
 """
 
+library_dirs = []
+include_dirs = []
+if sys.platform == "win32":
+    import os
+    snappy_dir = os.environ.get("SNAPPY_DIR")
+    if not snappy_dir:
+        raise Exception("please set SNAPPY_DIR to where the snappy source lives")
+    library_dirs = [os.path.join(snappy_dir, "Release")]
+    include_dirs = [snappy_dir]
 
 snappymodule = Extension('snappy._snappy',
                          libraries=['snappy'],
-                         sources=['snappy/snappymodule.cc', 'snappy/crc32c.c'])
+                         sources=['snappy/snappymodule.cc', 'snappy/crc32c.c'],
+                         library_dirs=library_dirs,
+                         include_dirs=include_dirs)
 
 ext_modules = [snappymodule]
 packages = ['snappy']
